@@ -2,6 +2,7 @@ import api_info
 import meraki
 from datetime import datetime
 from openpyxl import Workbook
+from tqdm import tqdm
 
 API_KEY = api_info.api_nyckel
 dashboard = meraki.DashboardAPI(API_KEY, suppress_logging=True)
@@ -35,10 +36,13 @@ def main():
                 org_list_loop.get("id"), suppress_logging=True
             )
         except meraki.APIError:
+            #with open("failed_orgs.txt", "w+"):
+            #    print(f"Failed to run script on org: {org_list_loop}" + "\n").encode("utf-8")
             continue
 
         """From the list of Networks, make a list of all associated devices"""
-        for network_list_loop in network_dict:
+        n = org_list_loop.get("name")
+        for network_list_loop in tqdm(network_dict, desc=str(f"{n}")):
             network_list_id.append(network_list_loop.get("id"))
             device_list = dashboard.networks.getNetworkDevices(
                 network_list_loop.get("id")
@@ -52,9 +56,6 @@ def main():
                 serial_number = str(device.get("serial"))
                 customer = str(org_list_loop.get("name"))
                 network_name = str(network_list_loop.get("name"))
-                print(
-                    f"Device Name: {name:35}     Device Software: {software_version:30}     Device Model: {model:15}     Network: {network_name:20}     Serial: {serial_number:20}"
-                )
                 """Write to Excel Sheet"""
                 exel_info = (
                     customer,
