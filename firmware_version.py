@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import api_info
 import meraki
 from datetime import datetime
@@ -10,7 +12,7 @@ dashboard = meraki.DashboardAPI(API_KEY, suppress_logging=True)
 """Excel info"""
 wb = Workbook()
 ws = wb.active
-ws["A1"] = "Customer"
+ws["A1"] = "Costumer"
 ws["B1"] = "Network"
 ws["C1"] = "Device"
 ws["D1"] = "Software Version"
