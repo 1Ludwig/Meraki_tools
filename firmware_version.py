@@ -18,11 +18,11 @@ ws["C1"] = "Device"
 ws["D1"] = "Software Version"
 ws["E1"] = "Device Model"
 ws["F1"] = "Serial Number"
+ws["G1"] = "Tags"
 
 
 def main():
-
-    """ Fetch organisation ID's and put them in a dict """
+    """Fetch organisation ID's and put them in a dict"""
     org_dict = dashboard.organizations.getOrganizations()
 
     org_list = []
@@ -38,7 +38,7 @@ def main():
                 org_list_loop.get("id"), suppress_logging=True
             )
         except meraki.APIError:
-            #with open("failed_orgs.txt", "w+"):
+            # with open("failed_orgs.txt", "w+"):
             #    print(f"Failed to run script on org: {org_list_loop}" + "\n").encode("utf-8")
             continue
 
@@ -58,6 +58,8 @@ def main():
                 serial_number = str(device.get("serial"))
                 customer = str(org_list_loop.get("name"))
                 network_name = str(network_list_loop.get("name"))
+                tags = ";".join([str(item) for item in device.get("tags")])
+
                 """Write to Excel Sheet"""
                 exel_info = (
                     customer,
@@ -66,6 +68,7 @@ def main():
                     software_version,
                     model,
                     serial_number,
+                    tags,
                 )
                 ws.append(exel_info)
                 wb.save("firmware_report.xlsx")
